@@ -1,9 +1,11 @@
 package content
 
 import (
-	"github.com/foundation-13/gpr/pkg/types"
-	"github.com/labstack/echo"
 	"net/http"
+
+	"github.com/labstack/echo"
+
+	"github.com/foundation-13/gpr/pkg/types"
 )
 
 func Assemble(e *echo.Echo, m Manager) {

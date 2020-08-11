@@ -1,11 +1,11 @@
-package user
+package profile
 
 import (
 	"context"
 	"github.com/foundation-13/gpr/pkg/types"
 )
 
-//go:generate mockery -name Manager -outpkg apimocks -output ./apimocks -dir .
+//go:generate mockery -name Manager -outpkg profilemocks -output ./profilemocks -dir .
 type Manager interface {
 	GetReviews(ctx context.Context, userID string) (types.ReviewsDTO, error)
 }

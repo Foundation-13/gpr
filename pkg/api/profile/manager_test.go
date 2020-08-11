@@ -1,4 +1,4 @@
-package user_test
+package profile_test
 
 import (
 	"context"
@@ -6,13 +6,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/foundation-13/gpr/pkg/api/user"
+	"github.com/foundation-13/gpr/pkg/api/profile"
 	"github.com/foundation-13/gpr/pkg/types"
 )
 
 func TestManager_GetReviews(t *testing.T) {
 	t.Run("succeeded", func(t *testing.T) {
-		man := user.NewManager()
+		man := profile.NewManager()
 
 		reviews, err := man.GetReviews(context.Background(), "from ctx")
 

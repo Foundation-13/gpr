@@ -2,7 +2,9 @@ package content
 
 import (
 	"net/http"
+
 	"github.com/labstack/echo"
+
 	"github.com/foundation-13/gpr/pkg/types"
 )
 

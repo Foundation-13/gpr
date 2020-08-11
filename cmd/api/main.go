@@ -6,9 +6,10 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
-	"github.com/foundation-13/gpr/pkg/log"
-	"github.com/foundation-13/gpr/pkg/api/content"
 	"github.com/foundation-13/gpr/pkg/api/mdlwr"
+	"github.com/foundation-13/gpr/pkg/api/profile"
+	"github.com/foundation-13/gpr/pkg/api/review"
+	"github.com/foundation-13/gpr/pkg/log"
 )
 
 func main() {
@@ -25,8 +26,12 @@ func main() {
 	e.Use(authMdlwr.MiddlewareFunc)
 
 	log.L.Info("api started")
-	m := content.NewManager()
-	content.Assemble(e, m)
+
+	reviewManager := review.NewManager()
+	review.Assemble(e, reviewManager)
+
+	userManager := profile.NewManager()
+	profile.Assemble(e, userManager)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "green"})

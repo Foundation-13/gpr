@@ -1,4 +1,4 @@
-package mdlwr
+package middleware
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 
-	"github.com/foundation-13/gpr/pkg/api/utils"
+	"github.com/foundation-13/gpr/pkg/utils"
 )
 
 const (
@@ -14,22 +14,23 @@ const (
 	authTokenHead = "Bearer"
 )
 
-type AuthMdlwrTokenVerifier interface {
-	VerifyToken(idToken string) (string, error)
-}
-
-type AuthMdlwr struct {
-	verifier AuthMdlwrTokenVerifier
-}
-
-func NewAuthMdlwr(verifier AuthMdlwrTokenVerifier) *AuthMdlwr {
-	return &AuthMdlwr{verifier: verifier}
+//go:generate mockery -name TokenVerifier -outpkg middlewaremocks -output ./middlewaremocks -dir .
+type TokenVerifier interface {
+	VerifyToken(token string) (string, error)
 }
 
 // Authentication middleware
 // Extract bearer token from the headers and check it
 
-func (mdlwr *AuthMdlwr) MiddlewareFunc(next echo.HandlerFunc) echo.HandlerFunc {
+type Auth struct {
+	verifier TokenVerifier
+}
+
+func NewAuth(verifier TokenVerifier) *Auth {
+	return &Auth{verifier: verifier}
+}
+
+func (m *Auth) MiddlewareFunc(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authHeader := c.Request().Header.Get(authToken)
 		if len(authHeader) == 0 {
@@ -43,12 +44,13 @@ func (mdlwr *AuthMdlwr) MiddlewareFunc(next echo.HandlerFunc) echo.HandlerFunc {
 
 		token := parts[1]
 
-		userID, err := mdlwr.verifier.VerifyToken(token)
+		userID, err := m.verifier.VerifyToken(token)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Token validating error")
 		}
 
-		utils.SetUserIdInContext(c, userID)
+		utils.UpdateEchoContextWithUserID(c, userID)
+
 		return next(c)
 	}
 }

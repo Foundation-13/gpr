@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	echomiddleware "github.com/labstack/echo/middleware"
 
-	"github.com/foundation-13/gpr/pkg/api/mdlwr"
+	"github.com/foundation-13/gpr/pkg/api/middleware"
 	"github.com/foundation-13/gpr/pkg/api/profile"
 	"github.com/foundation-13/gpr/pkg/api/review"
 	"github.com/foundation-13/gpr/pkg/log"
@@ -17,11 +17,11 @@ func main() {
 
 	e := echo.New()
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	e.Use(echomiddleware.Logger())
+	e.Use(echomiddleware.Recover())
 
-	verifier := mdlwr.NewFakeAuthTokenVerifier()
-	authMdlwr := mdlwr.NewAuthMdlwr(verifier)
+	verifier := middleware.NewDummyTokenVerifier()
+	authMdlwr := middleware.NewAuth(verifier)
 
 	e.Use(authMdlwr.MiddlewareFunc)
 

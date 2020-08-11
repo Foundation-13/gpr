@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
-	"github.com/foundation-13/gpr/pkg/log"
 	"github.com/foundation-13/gpr/pkg/api/content"
+	"github.com/foundation-13/gpr/pkg/log"
 )
 
 func main() {

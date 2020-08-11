@@ -8,6 +8,7 @@ import (
 
 	"github.com/foundation-13/gpr/pkg/log"
 	"github.com/foundation-13/gpr/pkg/api/content"
+	"github.com/foundation-13/gpr/pkg/api/mdlwr"
 )
 
 func main() {
@@ -17,6 +18,11 @@ func main() {
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	verifier := mdlwr.NewFakeAuthTokenVerifier()
+	authMdlwr := mdlwr.NewAuthMdlwr(verifier)
+
+	e.Use(authMdlwr.MiddlewareFunc)
 
 	log.L.Info("api started")
 	m := content.NewManager()

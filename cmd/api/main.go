@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/foundation-13/gpr/pkg/utils"
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -13,6 +14,7 @@ import (
 	"github.com/foundation-13/gpr/pkg/api/review"
 	"github.com/foundation-13/gpr/pkg/log"
 	"github.com/foundation-13/gpr/pkg/storage"
+	"github.com/foundation-13/gpr/pkg/utils"
 )
 
 func main() {
@@ -36,19 +38,23 @@ func main() {
 		IDGen: utils.UUIDIDGen{},
 	}
 
-	e.Use(authMdlwr.MiddlewareFunc)
-
 	log.L.Info("api started")
 
 	reviewManager := review.NewManager(reviewConfig)
-	review.Assemble(e, reviewManager)
+	review.Assemble(e, reviewManager, authMdlwr.MiddlewareFunc)
+
 
 	userManager := profile.NewManager()
-	profile.Assemble(e, userManager)
+	profile.Assemble(e, userManager, authMdlwr.MiddlewareFunc)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "green"})
 	})
+
+
+	data, _ := json.MarshalIndent(e.Routes(), "", "  ")
+
+	fmt.Println(string(data))
 
 	e.Logger.Fatal(e.Start(":8765"))
 }

@@ -19,7 +19,7 @@ func Assemble(e *echo.Echo, m Manager, middleware ...echo.MiddlewareFunc) {
 	g := e.Group("/reviews")
 	g.Use(middleware...)
 
-	g.POST("/", h.Create)
+	g.POST("", h.Create)
 	g.PUT("/upload", h.AddImage)
 }
 

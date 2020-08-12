@@ -1,7 +1,6 @@
 package review
 
 import (
-	"github.com/foundation-13/gpr/pkg/log"
 	"net/http"
 
 	"github.com/gavrilaf/errors"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/foundation-13/gpr/pkg/types"
 	"github.com/foundation-13/gpr/pkg/utils"
+	"github.com/foundation-13/gpr/pkg/log"
 )
 
 func Assemble(e *echo.Echo, m Manager, middleware ...echo.MiddlewareFunc) {

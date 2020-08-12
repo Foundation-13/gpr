@@ -66,6 +66,26 @@ func TestCreateReview(t *testing.T) {
 	})
 }
 
+func TestAddImage(t *testing.T) {
+	subj := prepareTest()
+
+	subj.manager.On("AddImage", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return( nil)
+
+	subj.req.PUT("/reviews/upload").
+		SetDebug(true).
+		SetHeader(map[string]string{"Authorization": "Bearer 123"}).
+		SetFileFromPath([]gofight.UploadFile{
+			{
+				Path:    "/images/media.png",
+				Name:    "file",
+				Content: []byte("123"),
+			},
+		}).
+		Run(subj.ech, func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+}
+
 // helperes
 
 const (

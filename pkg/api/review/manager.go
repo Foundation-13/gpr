@@ -43,8 +43,7 @@ func (man *manager) CreateReview(ctx context.Context, userID string, review type
 
 func (man *manager) AddImage(ctx context.Context, r io.Reader, fileName string, contentType string) error {
 	log.InitLog(true)
-	log.L.Info("hi")
-	var imageName = "image-" + path.Ext(fileName)
+	var imageName = "image-" + path.Base(fileName)
 	if err := man.stg.UploadObject(ctx, imageName, contentType, r); err != nil {
 		log.L.WithError(err).Error("failed to upload image to the storage")
 		return err

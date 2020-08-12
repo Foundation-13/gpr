@@ -9,6 +9,7 @@ type URLProvider interface {
 	URLByID(id string) string
 }
 
+//go:generate mockery -name Client -outpkg storagemocks -output ./storagemocks -dir .
 type Client interface {
 	Name() string
 

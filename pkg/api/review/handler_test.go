@@ -26,7 +26,7 @@ func TestCreateReview(t *testing.T) {
 
 		subj.manager.On("CreateReview", mock.Anything, mock.Anything, mock.Anything).Return("1", nil)
 
-		subj.req.POST("/reviews/").
+		subj.req.POST("/reviews").
 			SetDebug(true).
 			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			SetBody(validReviewJson).
@@ -41,7 +41,7 @@ func TestCreateReview(t *testing.T) {
 	t.Run("invalid JSON", func(t *testing.T) {
 		subj := prepareTest()
 
-		subj.req.POST("/reviews/").
+		subj.req.POST("/reviews").
 			SetDebug(true).
 			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			SetBody(invalidJson).
@@ -55,7 +55,7 @@ func TestCreateReview(t *testing.T) {
 
 		subj.manager.On("CreateReview", mock.Anything, mock.Anything, mock.Anything).Return("", fmt.Errorf(""))
 
-		subj.req.POST("/reviews/").
+		subj.req.POST("/reviews").
 			SetDebug(true).
 			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			SetBody(validReviewJson).

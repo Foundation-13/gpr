@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -34,6 +36,11 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "green"})
 	})
+
+
+	data, _ := json.MarshalIndent(e.Routes(), "", "  ")
+
+	fmt.Println(string(data))
 
 	e.Logger.Fatal(e.Start(":8765"))
 }

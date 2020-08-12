@@ -3,10 +3,13 @@ module github.com/foundation-13/gpr
 go 1.14
 
 require (
+	cloud.google.com/go/storage v1.10.0
 	github.com/TV4/logrus-stackdriver-formatter v0.1.0
 	github.com/appleboy/gofight/v2 v2.1.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/gavrilaf/errors v0.1.1
 	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect

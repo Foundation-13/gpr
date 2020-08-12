@@ -15,3 +15,4 @@ type Client interface {
 	UploadObject(ctx context.Context, name string, contentType string, r io.Reader) error
 	DeleteObject(ctx context.Context, name string) error
 }
+

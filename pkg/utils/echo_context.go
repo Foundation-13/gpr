@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"github.com/labstack/echo"
 )
 
@@ -10,7 +11,7 @@ func UpdateEchoContextWithUserID(c echo.Context, userID string) {
 	c.Set(userIDKey, userID)
 }
 
-func UserIDFromEchoContext(c echo.Context) string {
+func FromEchoContext(c echo.Context) (context.Context, string) {
 	userID := c.Get(userIDKey)
-	return userID.(string)
+	return c.Request().Context(), userID.(string)
 }

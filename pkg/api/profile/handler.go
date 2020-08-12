@@ -1,29 +1,30 @@
 package profile
 
 import (
+	"github.com/foundation-13/gpr/pkg/utils"
 	"github.com/labstack/echo"
 	"net/http"
 )
 
-func Assemble(e *echo.Echo, man Manager) {
+func Assemble(e *echo.Echo, m Manager, middleware ...echo.MiddlewareFunc) {
 	h := &handler{
-		man: man,
+		manager: m,
 	}
 
 	g := e.Group("/profile")
+	g.Use(middleware...)
 
 	g.GET("/reviews", h.reviews)
 }
 
 type handler struct {
-	man Manager
+	manager Manager
 }
 
 func (h *handler) reviews(c echo.Context) error {
-	ctx := c.Request().Context()
-	userID := "from ctx"
+	ctx, userID := utils.FromEchoContext(c)
 
-	reviews, err := h.man.GetReviews(ctx, userID)
+	reviews, err := h.manager.GetReviews(ctx, userID)
 	if err != nil {
 		return err
 	}

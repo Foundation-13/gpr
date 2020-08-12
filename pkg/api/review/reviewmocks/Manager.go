@@ -15,20 +15,20 @@ type Manager struct {
 	mock.Mock
 }
 
-// CreateReview provides a mock function with given fields: ctx, dto
-func (_m *Manager) CreateReview(ctx context.Context, dto types.ReviewDTO) (string, error) {
-	ret := _m.Called(ctx, dto)
+// CreateReview provides a mock function with given fields: ctx, userID, _a2
+func (_m *Manager) CreateReview(ctx context.Context, userID string, _a2 types.ReviewDTO) (string, error) {
+	ret := _m.Called(ctx, userID, _a2)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, types.ReviewDTO) string); ok {
-		r0 = rf(ctx, dto)
+	if rf, ok := ret.Get(0).(func(context.Context, string, types.ReviewDTO) string); ok {
+		r0 = rf(ctx, userID, _a2)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, types.ReviewDTO) error); ok {
-		r1 = rf(ctx, dto)
+	if rf, ok := ret.Get(1).(func(context.Context, string, types.ReviewDTO) error); ok {
+		r1 = rf(ctx, userID, _a2)
 	} else {
 		r1 = ret.Error(1)
 	}

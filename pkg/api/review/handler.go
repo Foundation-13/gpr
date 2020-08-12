@@ -6,14 +6,16 @@ import (
 	"github.com/labstack/echo"
 
 	"github.com/foundation-13/gpr/pkg/types"
+	"github.com/foundation-13/gpr/pkg/utils"
 )
 
-func Assemble(e *echo.Echo, m Manager) {
+func Assemble(e *echo.Echo, m Manager, middleware ...echo.MiddlewareFunc) {
 	h := &handler{
 		manager: m,
 	}
 
 	g := e.Group("/reviews")
+	g.Use(middleware...)
 
 	g.POST("/", h.Create)
 }
@@ -25,15 +27,15 @@ type handler struct {
 }
 
 func (h *handler) Create(c echo.Context) error {
-	ctx := c.Request().Context()
-
 	var dto types.ReviewDTO
 	err := c.Bind(&dto)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	id, err := h.manager.CreateReview(ctx, dto)
+	ctx, userID := utils.FromEchoContext(c)
+
+	id, err := h.manager.CreateReview(ctx, userID, dto)
 	if err != nil {
 		return echo.NewHTTPError(500, err) // TODO: fix error handling
 	}

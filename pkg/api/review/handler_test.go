@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	"github.com/foundation-13/gpr/pkg/api/middleware"
+	"github.com/foundation-13/gpr/pkg/api/middleware/middlewaremocks"
 	"github.com/foundation-13/gpr/pkg/api/review"
 	"github.com/foundation-13/gpr/pkg/api/review/reviewmocks"
 )
@@ -22,10 +24,11 @@ func TestCreateReview(t *testing.T) {
 	t.Run("happy path", func(t *testing.T) {
 		subj := prepareTest()
 
-		subj.manager.On("CreateReview", mock.Anything, mock.Anything).Return("1", nil)
+		subj.manager.On("CreateReview", mock.Anything, mock.Anything, mock.Anything).Return("1", nil)
 
 		subj.req.POST("/reviews/").
 			SetDebug(true).
+			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			SetBody(validReviewJson).
 			Run(subj.ech, func(resp gofight.HTTPResponse, req gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, resp.Code)
@@ -40,6 +43,7 @@ func TestCreateReview(t *testing.T) {
 
 		subj.req.POST("/reviews/").
 			SetDebug(true).
+			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			SetBody(invalidJson).
 			Run(subj.ech, func(resp gofight.HTTPResponse, req gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusBadRequest, resp.Code)
@@ -49,10 +53,11 @@ func TestCreateReview(t *testing.T) {
 	t.Run("manager return an error", func(t *testing.T) {
 		subj := prepareTest()
 
-		subj.manager.On("CreateReview", mock.Anything, mock.Anything).Return("", fmt.Errorf(""))
+		subj.manager.On("CreateReview", mock.Anything, mock.Anything, mock.Anything).Return("", fmt.Errorf(""))
 
 		subj.req.POST("/reviews/").
 			SetDebug(true).
+			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			SetBody(validReviewJson).
 			Run(subj.ech, func(resp gofight.HTTPResponse, req gofight.HTTPRequest) {
 				assert.Equal(t, 500, resp.Code)
@@ -62,6 +67,10 @@ func TestCreateReview(t *testing.T) {
 }
 
 // helperes
+
+const (
+	testUserID = "user-id"
+)
 
 type mocks struct {
 	req     *gofight.RequestConfig
@@ -75,7 +84,11 @@ func prepareTest() *mocks {
 	ech := echo.New()
 	manager := &reviewmocks.Manager{}
 
-	review.Assemble(ech, manager)
+	verifier := &middlewaremocks.TokenVerifier{}
+	verifier.On("VerifyToken", mock.Anything).Return(testUserID, nil)
+	auth := middleware.NewAuth(verifier)
+
+	review.Assemble(ech, manager, auth.MiddlewareFunc)
 
 	return &mocks{
 		req:     req,

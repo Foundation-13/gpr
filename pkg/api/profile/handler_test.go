@@ -1,6 +1,8 @@
 package profile_test
 
 import (
+	"github.com/foundation-13/gpr/pkg/api/middleware"
+	"github.com/foundation-13/gpr/pkg/api/middleware/middlewaremocks"
 	"net/http"
 	"testing"
 
@@ -20,16 +22,22 @@ func TestReviews(t *testing.T) {
 
 		subj.manager.On("GetReviews", mock.Anything, mock.Anything).Return(types.ReviewsDTO{}, nil)
 
-		subj.req.GET("/profile/reviews").SetDebug(true).
+		subj.req.GET("/profile/reviews").
+			SetDebug(true).
+			SetHeader(map[string]string{"Authorization": "Bearer 1"}).
 			Run(subj.ech, func(resp gofight.HTTPResponse, req gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, resp.Code)
 
-			subj.manager.AssertCalled(t, "GetReviews", mock.Anything, "from ctx")
+				subj.manager.AssertCalled(t, "GetReviews", mock.Anything, testUserID)
 		})
 	})
 }
 
 // helpers
+
+const (
+	testUserID = "user-id"
+)
 
 type mocks struct {
 	req *gofight.RequestConfig
@@ -43,7 +51,11 @@ func prepareTest() *mocks {
 	ech := echo.New()
 	manager := &profilemocks.Manager{}
 
-	profile.Assemble(ech, manager)
+	verifier := &middlewaremocks.TokenVerifier{}
+	verifier.On("VerifyToken", mock.Anything).Return(testUserID, nil)
+	auth := middleware.NewAuth(verifier)
+
+	profile.Assemble(ech, manager, auth.MiddlewareFunc)
 
 	return &mocks{
 		req: req,
